@@ -1,3 +1,4 @@
+const { nanoid } = require('nanoid');
 const fs = require('fs').promises;
 const path = require('path');
 const contactsPath = path.join(process.cwd(), 'dataBase/contact.json');
@@ -14,13 +15,8 @@ async function getContactById(contactId) {
 async function addContact(name, email, phone) {
     const temporaryValue = await listContacts();
 
-    const tempMass = temporaryValue.map(user => user.id);
-    const tempMaxNum = Math.max(...tempMass);
-    const tempIdNum = tempMaxNum + 1;
-    const tempIdString = tempIdNum.toString();
-
     const userObj = {
-        id: tempIdString,
+        id: nanoid(),
         name,
         email,
         phone,
@@ -34,12 +30,11 @@ async function addContact(name, email, phone) {
 async function removeContact(contactId) {
     const temporaryValue = await listContacts();
     const chooseID = await getContactById(contactId);
+    console.log(contactId);
     console.log(chooseID);
     if (chooseID.id === contactId) {
-        const tempIndex = contactId - 1;
-        console.log(tempIndex);
-        temporaryValue.splice(tempIndex, 1);
-        fs.writeFile(contactsPath, JSON.stringify(temporaryValue));
+        const newMassOfCon = temporaryValue.filter(user => user.id !== contactId);
+        fs.writeFile(contactsPath, JSON.stringify(newMassOfCon));
     }
 }
 
